@@ -29,7 +29,7 @@ export function renderHardware(c,{brightness=0,pressed=false}={}){const d=dimens
  s+=rect(d.w/2-30,d.h-35,7,4,'#b6ef7d',1)+text(d.w/2-27,d.h-22,'ON',6);s+=text(d.w/2,d.h-7,'GPIO MODEL',6,'#bbd7c7');
  }else if(c.type==='led'){
  s+=`<path d="M 67 70 V 91 L 54 100 V 108 M 87 70 V 91 L 102 100 V 108" fill="none" stroke="url(#metal)" stroke-width="5"/>`;
- s+=rect(54,76,47,8,'#8a2430',4)+`<path d="M 57 77 V 58 A 20 20 0 0 1 40 0 V 77 Z" fill="url(#${brightness>0?'led-lit':'led-red'})" stroke="#f88179" stroke-opacity=".6" ${brightness>0?'style="filter:drop-shadow(0 0 '+(4+brightness*10)+'px #fa493e)"':''}/>`;
+ s+=rect(54,76,47,8,'#8a2430',4)+`<path d="M 57 77 V 58 A 20 20 0 0 1 97 58 V 77 Z" fill="url(#${brightness>0?'led-lit':'led-red'})" stroke="#f88179" stroke-opacity=".6" ${brightness>0?'style="filter:drop-shadow(0 0 '+(4+brightness*10)+'px #fa493e)"':''}/>`;
  s+=`<path d="M 64 66 V 59 Q 64 46 76 45" fill="none" stroke="#ffe9e1" stroke-width="4" stroke-linecap="round" opacity=".5"/>`;
  }else if(c.type==='resistor'){
  s+=`<path d="M 7 69 H 149" stroke="url(#metal)" stroke-width="4"/>`+`<path d="M 39 54 Q 30 69 39 84 L 49 84 Q 56 80 61 81 H 95 Q 102 80 108 84 H 117 Q 126 69 117 54 H 108 Q 101 58 95 57 H 61 Q 53 58 49 54 Z" fill="#d3c394" stroke="#988956"/>`;
