@@ -1,4 +1,4 @@
-import {catalog,solve} from './model.js?v=cf2';
+import {catalog,solve} from './model.js?v=bb2';
 // A deliberately closed grammar: never eval user source.
 function pythonToC(source){
  const lines=source.split('\n'),out=[],pins={},stack=[];let inLoop=false;
