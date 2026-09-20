@@ -1,14 +1,14 @@
 // Functional top-view SVG component diagrams, not manufacturing pinouts.
-import {catalog} from './model.js?v=cf2';
+import {catalog} from './model.js?v=bb2';
 const rect=(x,y,w,h,fill,rx=2,extra='')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}" ${extra}/>`;
 const circle=(x,y,r,fill,extra='')=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}" ${extra}/>`;
 const text=(x,y,t,size=10,fill='#e5eeeb')=>`<text x="${x}" y="${y}" font-size="${size}" fill="${fill}" font-family="ui-monospace,monospace" text-anchor="middle">${t}</text>`;
 function chip(x,y,w,h,label){let s='';for(let i=5;i<h-2;i+=7)s+=rect(x-5,y+i,5,3,'#9eabb0')+rect(x+w,y+i,5,3,'#9eabb0');return s+rect(x,y,w,h,'#192024',3,'stroke="#454e53"')+circle(x+6,y+6,2,'#6d7578')+text(x+w/2,y+h/2+4,label,8,'#929e9f')}
 function usb(x,y,w=32,h=25){return rect(x,y,w,h,'url(#metal)',3,'stroke="#d5dce0"')+rect(x+5,y+4,w-10,h-10,'#333b40',2)+rect(x+8,y+7,w-16,h-16,'#161b21',1)+rect(x+8,y+h-5,w-16,3,'#858f94',0)}
 export const appearanceDefs=`<linearGradient id="metal" x2="0" y2="1"><stop stop-color="#e9eef0"/><stop offset=".4" stop-color="#9ca9b0"/><stop offset=".6" stop-color="#dfe5e8"/><stop offset="1" stop-color="#79858d"/></linearGradient><radialGradient id="led-red" cx=".35" cy=".25"><stop stop-color="#ffaaa4"/><stop offset=".35" stop-color="#e3413d"/><stop offset="1" stop-color="#751a22"/></radialGradient><radialGradient id="led-lit" cx=".35" cy=".25"><stop stop-color="#fff2c7"/><stop offset=".35" stop-color="#ff6651"/><stop offset="1" stop-color="#ed272c"/></radialGradient>`;
-export function dimensions(c){if(c.type==='uno')return {w:220,h:265};if(c.type==='nano')return {w:156,h:278};if(c.type.startsWith('pico'))return {w:166,h:310};if(c.type==='breadboard')return {w:225,h:160};return {w:155,h:c.type==='pot'?146:120}}
+export function dimensions(c){if(c.type==='uno')return {w:220,h:265};if(c.type==='nano')return {w:156,h:278};if(c.type.startsWith('pico'))return {w:166,h:310};if(c.type==='breadboard')return {w:260,h:230};return {w:155,h:c.type==='pot'?146:120}}
 export function pinPoint(c,pin){const d=dimensions(c),pins=catalog[c.type].pins,i=pins.indexOf(pin),half=Math.ceil(pins.length/2);let x,y,left=true,label;
- if(c.type==='breadboard'){const n=Number(pin)-1;x=34+(n%5)*25;y=53+Math.floor(n/5)*15+(n>=15?16:0);label=false}
+ if(c.type==='breadboard'){const n=Number(pin)-1,strip=Math.floor(n/5),row=n%5;x=52+(strip%6)*32;y=61+row*15+(strip>=6?100:0);label=false}
  else if(catalog[c.type].board){left=i<half;x=left?10:d.w-10;y=64+(i%half)*16}
  else if(c.type==='led'){x=i===0?54:102;y=108;left=i===0}
  else if(c.type==='resistor'){x=i===0?7:148;y=69;left=i===0}
@@ -41,7 +41,11 @@ export function renderHardware(c,{brightness=0,pressed=false}={}){const d=dimens
  }else if(c.type==='sensor'){
  s+=rect(21,35,116,62,'#1a6a62',5,'stroke="#479888"');s+=circle(33,47,5,'#cab66a')+circle(33,47,2,'#151d20');s+=circle(119,47,5,'#cab66a')+circle(119,47,2,'#151d20');s+=circle(63,65,20,'#bc9864')+circle(63,65,16,'#e6c88f')+`<path d="M 52 55 H 70 V 61 H 54 V 67 H 71 V 74 H 54" fill="none" stroke="#a65046" stroke-width="3"/>`+chip(99,61,18,18,'');for(const x of [38,78,118])s+=rect(x-3,95,6,12,'url(#metal)',0);s+=text(79,91,'ANALOG INPUT',6);
  }else if(c.type==='breadboard'){
- s+=rect(0,32,d.w,d.h-32,'#dddcd3',8,'stroke="#aaa99f" stroke-width="2"');s+=rect(13,87,199,13,'#9c9f97',2)+rect(15,88,195,9,'#bfc1b8',1);for(let i=1;i<=30;i++){const p=pinPoint({...c,x:0,y:0},String(i));s+=rect(p.x-5,p.y-5,10,10,'#8d908b',2)+rect(p.x-2.5,p.y-2.5,5,5,'#293332',1)}for(let row=0;row<6;row++)s+=text(16,56+row*15+(row>=3?16:0),String(row+1),8,'#525b55');s+=text(113,153,'30 TIE POINTS · GROUPS OF 5',7,'#59655d');
+ s+=rect(0,32,d.w,d.h-32,'#e6e4da',8,'stroke="#a5a49a" stroke-width="2"');s+=rect(15,45,230,170,'#d8d7ce',5,'stroke="#b9b8af"');
+ s+=rect(20,126,220,25,'#aeb0aa',3)+rect(22,129,216,19,'#c6c7c0',2);for(let x=32;x<245;x+=32)s+=`<path d="M ${x} 47 V 124 M ${x} 153 V 213" stroke="#c2c1b8" stroke-width="1"/>`;
+ const rows=['A','B','C','D','E','F','G','H','I','J'];for(let i=0;i<5;i++){s+=text(27,64+i*15,rows[i],7,'#59615d');s+=text(27,164+i*15,rows[i+5],7,'#59615d')}for(let col=0;col<6;col++){s+=text(52+col*32,48,String(col+1),7,'#59615d');s+=text(52+col*32,220,String(col+1),7,'#59615d')}
+ for(let i=1;i<=60;i++){const p=pinPoint({...c,x:0,y:0},String(i));s+=circle(p.x,p.y,5,'#9da09b')+circle(p.x,p.y,2.8,'#26302f')+`<path d="M ${p.x-1.5} ${p.y-2} V ${p.y+2}" stroke="#0d1515" stroke-width="1"/>`}
+ s+=`<path d="M 18 116 H 242" stroke="#d04a54" stroke-width="2"/><path d="M 18 158 H 242" stroke="#4e79a8" stroke-width="2"/>`;s+=text(130,143,'CENTER TRENCH',6,'#767d78')+text(130,228,'60 TIE POINTS · GROUPS OF 5',6,'#59655d');
  }
  return `<g transform="translate(${c.x} ${c.y})" pointer-events="none">${s}</g>`;
 }
