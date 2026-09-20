@@ -3,7 +3,7 @@ export const catalog = {
  nano:{name:'Arduino Nano',group:'Microcontrollers',pins:[...Array.from({length:14},(_,i)=>'D'+i),...Array.from({length:8},(_,i)=>'A'+i),'5V','GND'],board:true},
  pico:{name:'Raspberry Pi Pico',group:'Microcontrollers',pins:[...Array.from({length:23},(_,i)=>'GP'+i),'GP26','GP27','GP28','3V3','GND'],board:true},
  pico2:{name:'Raspberry Pi Pico 2',group:'Microcontrollers',pins:[...Array.from({length:23},(_,i)=>'GP'+i),'GP26','GP27','GP28','3V3','GND'],board:true},
- led:{name:'LED',group:'Output',pins:['A','K']},resistor:{name:'Resistor',group:'Passive',pins:['1','2']},button:{name:'Push button',group:'Input',pins:['1','2']},pot:{name:'Potentiometer',group:'Input',pins:['VCC','OUT','GND']},sensor:{name:'Analog sensor',group:'Input',pins:['VCC','OUT','GND']},breadboard:{name:'Mini breadboard',group:'Passive',pins:Array.from({length:30},(_,i)=>String(i+1))}
+ led:{name:'LED',group:'Output',pins:['A','K']},resistor:{name:'Resistor',group:'Passive',pins:['1','2']},button:{name:'Push button',group:'Input',pins:['1','2']},pot:{name:'Potentiometer',group:'Input',pins:['VCC','OUT','GND']},sensor:{name:'Analog sensor',group:'Input',pins:['VCC','OUT','GND']},breadboard:{name:'Mini breadboard',group:'Passive',pins:Array.from({length:60},(_,i)=>String(i+1))}
 };
 export const uid=()=>crypto.randomUUID?.()||Array.from(crypto.getRandomValues(new Uint8Array(16)),b=>b.toString(16).padStart(2,'0')).join('');
 export function component(type,x=120,y=100){if(!catalog[type])throw Error('Unknown component');return {id:uid(),type,x,y,settings:{value:type==='resistor'?220:512}}}
@@ -27,7 +27,7 @@ export function solve(p,outputs={},modes={},pressed={}){
  const parent=new Map(),key=(id,pin)=>id+':'+pin;function root(k){if(!parent.has(k))parent.set(k,k);if(parent.get(k)!==k)parent.set(k,root(parent.get(k)));return parent.get(k)}function join(a,b){parent.set(root(a),root(b))}
  for(const c of p.components)for(const pin of catalog[c.type].pins)root(key(c.id,pin));
  for(const w of p.wires)join(key(w.from.id,w.from.pin),key(w.to.id,w.to.pin));
- for(const c of p.components){if(c.type==='resistor'||(c.type==='button'&&pressed[c.id]))join(key(c.id,'1'),key(c.id,'2'));if(c.type==='breadboard')for(let i=1;i<=30;i+=5)for(let j=1;j<5;j++)join(key(c.id,''+i),key(c.id,''+(i+j)))}
+ for(const c of p.components){if(c.type==='resistor'||(c.type==='button'&&pressed[c.id]))join(key(c.id,'1'),key(c.id,'2'));if(c.type==='breadboard')for(let i=1;i<=catalog.breadboard.pins.length;i+=5)for(let j=1;j<5;j++)join(key(c.id,''+i),key(c.id,''+(i+j)))}
  const sources=new Map(),weak=new Map(),warnings=[];function drive(k,v,isWeak=false){const m=isWeak?weak:sources,n=root(k);m.set(n,[...(m.get(n)||[]),v])}
  const board=p.components.find(c=>catalog[c.type].board);if(board){for(const pin of catalog[board.type].pins){const k=key(board.id,pin);if(pin==='GND')drive(k,0);else if(pin==='5V'||pin==='3V3')drive(k,1);else if(modes[pin]==='OUTPUT'&&outputs[pin]!==undefined)drive(k,outputs[pin]);else if(modes[pin]==='INPUT_PULLUP')drive(k,1,true)}}
  function read(k){const s=sources.get(root(k))||weak.get(root(k))||[];if(!s.length)return null;if(Math.max(...s)!==Math.min(...s)){return 'X'}return s[0]}
