@@ -17,7 +17,7 @@ Open http://localhost:3000. No external runtime packages or network services are
 ## Use
 
 - First visit opens a wired Arduino Blink circuit. Projects opens the dashboard and Arduino button and MicroPython Pico examples.
-- Click a component in the palette, or drag it onto the workspace. One MCU per project. Drag component headings to reposition.
+- Click a component in the palette, or drag it onto the workspace. One MCU per project. Drag component headings to reposition. Use the × button in any component header to remove it; the MCU can be deleted and replaced with another board.
 - Click/tap one pin and then another to wire them. Escape cancels a pending wire. Select and delete a wire or component via its inspector or Delete key.
 - Edit code and click Run; Pause preserves interpreter state, Reset clears state. Speed scales simulated time (0.25–4×). Editing circuit/code invalidates the current run. Sensor sliders may change during a run.
 - Hold a button's PUSH surface to close its switch. Inspect current GPIO values in the Pin inspector tab.
@@ -38,7 +38,7 @@ This is a restricted source interpreter and ideal digital connectivity model, **
 | Resistor | Ideal conductive link, editable ohm metadata | Resistance does not affect voltage/current/brightness |
 | Push button | Momentary ideal contact between pins 1 and 2 | No bounce or four-terminal package model |
 | Potentiometer / analog sensor | Manually set normalized value (0–1023) when powered | No real voltage divider, temperature/light physics, sensor protocol or calibration |
-| Mini breadboard | Groups of five holes: 1–5, 6–10, …, 26–30 | Logical 30-hole abstraction; no rails or split groups |
+| Mini breadboard | 60 usable tie points arranged as A–E / F–J rows across six columns | Each visible column-half connects in a group of five; colored lines are guides, not power rails |
 
 Digital HIGH/LOW are normalized 1/0, not actual voltages. Board 5V/3V3 labels both supply logic HIGH. Resistors and wires union connected nodes; conflicting driven levels halt simulation, floating reads report an error instead of assuming zero. PWM brightness and analog values are normalized scalars, not time-varying waveforms. Analog reads use 10-bit normalized values on both board families. Uno/Nano PWM is restricted to D3/5/6/9/10/11. Pico PWM is normalized through the Arduino-style analogWrite subset; MicroPython PWM classes are not supported.
 
